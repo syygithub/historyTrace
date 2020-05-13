@@ -1,24 +1,13 @@
-# test-self
+# historyTrace
 
-## Project setup
-```
-npm install
-```
+A Leaflet plug-in to show a history trace
 
-### Compiles and hot-reloads for development
 ```
-npm run serve
+    var latlngs = [
+        [39.5, 110.5],
+        [37.7, 109.1]
+    ];
+    var duration = [3000];
+    var marker = L.Marker.historyTrace(latlngs, duration).addTo(mymap);
+    marker.start();
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
