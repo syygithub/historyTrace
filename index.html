@@ -23,7 +23,8 @@
 
 <body>
     <div id='map'>
-        <button style="z-index: 1000;position: absolute;left:200px;top:200px" onclick="move()">移动</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:100px" onclick="move()">移动</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:120px" onclick="reset()">重置</button>
     </div>
 </body>
 
@@ -34,7 +35,11 @@
     function move() {
         marker.start();
     }
-    var mymap = L.map('map').setView([39, 110], 9);
+
+    function reset() {
+        marker.reset();
+    }
+    var mymap = L.map('map').setView([39, 110], 7);
     var layer = L.tileLayer(
         "http://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}", {
             "subdomains": ["1", "2", "3", "4"]
@@ -43,13 +48,17 @@
     layer.addTo(mymap);
     var latlngs = [
         [39.5, 110.5],
-        [37.7, 109.1]
+        [37.7, 109.1],
+        [37.7, 110.5]
     ];
-    var duration = [3000];
+    var hisOptions = {
+        durationTimes: [2000, 2000],
+        lineColor: "green"
+    }
     var polyline = L.polyline(latlngs, {
         color: 'red'
     }).addTo(mymap);
-    var marker = L.Marker.historyTrace(latlngs, duration).addTo(mymap);
+    var marker = L.Marker.historyTrace(latlngs, hisOptions).addTo(mymap); //marker 的其他option为第三个参数
     marker.on('click', function(e) {
         console.log(e);
     })
