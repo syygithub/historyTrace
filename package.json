@@ -1,12 +1,30 @@
 {
-    "name": "historytrace",
+    "name": "leaflet.marker.historytrace",
     "version": "1.0.0",
     "description": "A Leaflet plug-in to show a history trace",
-    "main": "index.js",
+    "main": "./src/historyTrace.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+    "keywords": [
+        "leaflet",
+        "marker",
+        "historyTrace"
+    ],
+    "author": "syy",
+    "license": "ISC",
+    "dependencies": {
+
+    },
+    "devDependencies": {
+
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/syygithub/historyTrace.git"
+    },
+    "bugs": {
+        "url": "https://github.com/syygithub/historyTrace/issues"
+    },
+    "homepage": "https://github.com/syygithub/historyTrace#readme"
 }
