@@ -59,7 +59,6 @@ L.Marker.HistoryTrace = L.Marker.extend({
         this._getCurrLatlng(this.curLineIndex);
         this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
         this.fire('movestart');
-        console.log("moveto");
         this.status = 1;
         this._moveTo();
         return this;
@@ -70,9 +69,12 @@ L.Marker.HistoryTrace = L.Marker.extend({
             this.polyline = null;
         }
     },
-    reset: function() {
+    restart: function() {
         this._getStartStatus();
         this.start();
+    },
+    reset: function() {
+        this._getStartStatus();
     },
     _calcelAnim: function() {
         if (this._animateId) {

@@ -23,17 +23,14 @@
 
 <body>
     <div id='map'>
-        <button style="z-index: 1000;position: absolute;left:200px;top:100px" onclick="move()">移动</button>
-        <button style="z-index: 1000;position: absolute;left:200px;top:120px" onclick="reset()">重置</button>
-        <button style="z-index: 1000;position: absolute;left:200px;top:140px" onclick="clearLine()">清空线</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:100px" onclick="start()">start</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:120px" onclick="reset()">reset</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:140px" onclick="restart()">restart</button>
     </div>
 </body>
 
 <script type="text/javascript">
-    console.log(11111111111)
-    console.log(window.L);
-
-    function move() {
+    function start() {
         marker.start();
     }
 
@@ -41,8 +38,8 @@
         marker.reset();
     }
 
-    function clearLine() {
-        marker._clearLine();
+    function restart() {
+        marker.restart();
     }
     var mymap = L.map('map').setView([39, 110], 7);
     var layer = L.tileLayer(
@@ -67,6 +64,12 @@
     var marker = L.Marker.historyTrace(latlngs, hisOptions).addTo(mymap); //marker 的其他option为第三个参数
     marker.on('click', function(e) {
         console.log(e);
+    })
+    marker.on("movestart", function() {
+        console.log('movestart');
+    })
+    marker.on("moveend", function() {
+        console.log('moveend');
     })
 </script>
 
