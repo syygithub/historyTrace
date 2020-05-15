@@ -26,6 +26,7 @@
         <button style="z-index: 1000;position: absolute;left:200px;top:100px" onclick="start()">start</button>
         <button style="z-index: 1000;position: absolute;left:200px;top:120px" onclick="reset()">reset</button>
         <button style="z-index: 1000;position: absolute;left:200px;top:140px" onclick="restart()">restart</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:160px" onclick="stop()">stop</button>
     </div>
 </body>
 
@@ -40,6 +41,10 @@
 
     function restart() {
         marker.restart();
+    }
+
+    function stop() {
+        marker.stop();
     }
     var mymap = L.map('map').setView([39, 110], 7);
     var layer = L.tileLayer(

@@ -13,7 +13,8 @@ L.Marker.HistoryTrace = L.Marker.extend({
     startLatlng: null,
     endLatlng: null,
     remaining: null,
-    status: 0, //0未开始 1 isrunning 2已结束
+    stoptime: null,
+    status: 0, //0未开始 1isrunning 2已结束 3stop
 
     initialize: function(latlngs, hisOptions, options) {
         Object.assign(this.hisOptions, hisOptions);
@@ -31,8 +32,6 @@ L.Marker.HistoryTrace = L.Marker.extend({
             throw new Error('durationTimes参数输入格式不正确，应为[number,number]')
         }
         L.Marker.prototype.initialize.call(this, latlngs[0], options);
-
-
         this.startLatlng = L.latLng(latlngs[0]);
         this.endLatlng = L.latLng(latlngs[latlngs.length - 1]);
         this.fromLatlng = L.latLng(latlngs[0]);
@@ -52,16 +51,31 @@ L.Marker.HistoryTrace = L.Marker.extend({
         this._calcelAnim();
         this.setLatLng(L.latLng([this.startLatlng.lat, this.startLatlng.lng]));
     },
-    start: function() {
-        if (this.status = 1) {
-            this._getStartStatus();
+    stop: function() {
+        if (this.status == 0 || this.status == 2) {
+            return
+        } else {
+            this._calcelAnim();
+            this.stoptime = this.remaining;
         }
-        this.polyline = L.polyline([this.startLatlng, this.startLatlng], { color: this.hisOptions.lineColor }).addTo(this._map);
-        this._getCurrLatlng(this.curLineIndex);
-        this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
-        this.fire('movestart');
-        this.status = 1;
-        this._moveTo();
+        this.status = 3;
+        this.fire("stop");
+    },
+    start: function() {
+        console.log(this.status);
+        if (this.status == 3) {
+            this.status = 1;
+            this.moveToUntil = performance.now() + this.stoptime;
+            this._animateId = L.Util.requestAnimFrame(this._moveTo, this);
+        } else {
+            this._getStartStatus();
+            this.polyline = L.polyline([this.startLatlng, this.startLatlng], { color: this.hisOptions.lineColor }).addTo(this._map);
+            this._getCurrLatlng(this.curLineIndex);
+            this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
+            this.fire('movestart');
+            this.status = 1;
+            this._moveTo();
+        }
         return this;
     },
     _clearLine: function() {
@@ -106,7 +120,7 @@ L.Marker.HistoryTrace = L.Marker.extend({
             this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
         }
         this.remaining = this.moveToUntil - performance.now();
-        // console.log("this.remaining" + this.remaining);
+        console.log("this.remaining" + this.remaining);
         var persent = (this.hisOptions.durationTimes[this.curLineIndex] - this.remaining) / this.hisOptions.durationTimes[this.curLineIndex];
         // 会出现persent>1的情况
         if (persent < 1) {
