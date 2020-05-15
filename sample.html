@@ -25,6 +25,7 @@
     <div id='map'>
         <button style="z-index: 1000;position: absolute;left:200px;top:100px" onclick="move()">移动</button>
         <button style="z-index: 1000;position: absolute;left:200px;top:120px" onclick="reset()">重置</button>
+        <button style="z-index: 1000;position: absolute;left:200px;top:140px" onclick="clearLine()">清空线</button>
     </div>
 </body>
 
@@ -39,6 +40,10 @@
     function reset() {
         marker.reset();
     }
+
+    function clearLine() {
+        marker._clearLine();
+    }
     var mymap = L.map('map').setView([39, 110], 7);
     var layer = L.tileLayer(
         "http://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}", {
@@ -49,10 +54,11 @@
     var latlngs = [
         [39.5, 110.5],
         [37.7, 109.1],
-        [37.7, 110.5]
+        [37.7, 110.5],
+        [38.7, 110.2]
     ];
     var hisOptions = {
-        durationTimes: [2000, 2000],
+        durationTimes: [3000],
         lineColor: "green"
     }
     var polyline = L.polyline(latlngs, {

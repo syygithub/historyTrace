@@ -13,16 +13,17 @@ L.Marker.HistoryTrace = L.Marker.extend({
     startLatlng: null,
     endLatlng: null,
     remaining: null,
-    status: {
-        start: 0
-    },
+    status: 0, //0未开始 1 isrunning 2已结束
 
     initialize: function(latlngs, hisOptions, options) {
         Object.assign(this.hisOptions, hisOptions);
 
         if (Array.isArray(this.hisOptions.durationTimes)) {
             if (this.hisOptions.durationTimes.length > 1 && latlngs.length - 1 == this.hisOptions.durationTimes.length) {
-                this.curDurationTime = this.hisOptions.durationTimes;
+
+            } else if (this.hisOptions.durationTimes.length == 1) {
+                this.hisOptions.durationTimes = new Array(latlngs.length - 1).fill(this.hisOptions.durationTimes[0]);
+                console.log(this.hisOptions.durationTimes);
             } else {
                 throw new Error('durationTimes参数的length应为1或者是坐标点个数-1')
             }
@@ -42,12 +43,24 @@ L.Marker.HistoryTrace = L.Marker.extend({
         this.fromLatlng = L.latLng(latlngs[index]);
         this.toLatlng = L.latLng(latlngs[index + 1]);
     },
+    _getStartStatus: function() {
+        this._clearLine();
+        this.curLineIndex = 0;
+        this.remaining = 0;
+        this.status = 0;
+        this._calcelAnim();
+        this.setLatLng(L.latLng([this.startLatlng.lat, this.startLatlng.lng]));
+    },
     start: function() {
-        console.log("start" + performance.now());
-        this.fire('movestart');
+        if (this.status = 1) {
+            this._getStartStatus();
+        }
         this.polyline = L.polyline([this.startLatlng, this.startLatlng], { color: this.hisOptions.lineColor }).addTo(this._map);
         this._getCurrLatlng(this.curLineIndex);
         this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
+        this.fire('movestart');
+        console.log("moveto");
+        this.status = 1;
         this._moveTo();
         return this;
     },
@@ -58,9 +71,7 @@ L.Marker.HistoryTrace = L.Marker.extend({
         }
     },
     reset: function() {
-        this.curLineIndex = 0;
-        this._clearLine();
-        this._getCurrLatlng(this.curLineIndex);
+        this._getStartStatus();
         this.start();
     },
     _calcelAnim: function() {
@@ -73,14 +84,14 @@ L.Marker.HistoryTrace = L.Marker.extend({
         if (!this._map) return;
         if (this.remaining < 0) {
             this.curLineIndex++;
-            if (this.curLineIndex == this.totalLineIndex) {
-                console.log('end');
-                console.log(L.latLng([this.endLatlng.lat, this.endLatlng.lng]));
+            if (this.curLineIndex >= this.totalLineIndex) {
                 this.setLatLng(L.latLng([this.endLatlng.lat, this.endLatlng.lng]));
                 this.polyline.addLatLng(L.latLng([this.endLatlng.lat, this.endLatlng.lng]));
                 L.Util.cancelAnimFrame(this._animateId);
                 this._animateId = null;
+                this.remaining = 0;
                 this.fire('moveend');
+                this.status = 2;
                 return this;
             }
             this._getCurrLatlng(this.curLineIndex);
@@ -89,6 +100,7 @@ L.Marker.HistoryTrace = L.Marker.extend({
             this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
         }
         this.remaining = this.moveToUntil - performance.now();
+        console.log("this.remaining" + this.remaining);
         var persent = (this.hisOptions.durationTimes[this.curLineIndex] - this.remaining) / this.hisOptions.durationTimes[this.curLineIndex];
         // 会出现persent>1的情况
         if (persent < 1) {
@@ -96,7 +108,6 @@ L.Marker.HistoryTrace = L.Marker.extend({
             var lng = this.fromLatlng.lng + persent * (this.toLatlng.lng - this.fromLatlng.lng);
             this.setLatLng(L.latLng([lat, lng]));
             this.polyline.addLatLng(L.latLng([lat, lng]));
-
         }
         this._animateId = L.Util.requestAnimFrame(this._moveTo, this);
     }
