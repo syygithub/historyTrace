@@ -1,6 +1,6 @@
 {
     "name": "leaflet.marker.historytrace",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Leaflet plug-in to show a history trace",
     "main": "/src/historyTrace.js",
     "scripts": {

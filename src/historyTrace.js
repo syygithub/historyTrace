@@ -3,9 +3,9 @@
 L.Marker.HistoryTrace = L.Marker.extend({
     hisOptions: {
         durationTimes: [2000],
-        lineColor: "red"
+        lineColor: "red",
+        loop: false
     },
-    curDurationTime: 2000,
     curLineIndex: 0, //当前线段的index
     totalLineIndex: 0, //线段的length 
     _animateId: null,
@@ -31,6 +31,7 @@ L.Marker.HistoryTrace = L.Marker.extend({
             throw new Error('durationTimes参数输入格式不正确，应为[number,number]')
         }
         L.Marker.prototype.initialize.call(this, latlngs[0], options);
+
 
         this.startLatlng = L.latLng(latlngs[0]);
         this.endLatlng = L.latLng(latlngs[latlngs.length - 1]);
@@ -94,6 +95,9 @@ L.Marker.HistoryTrace = L.Marker.extend({
                 this.remaining = 0;
                 this.fire('moveend');
                 this.status = 2;
+                if (this.hisOptions.loop) {
+                    this.restart();
+                }
                 return this;
             }
             this._getCurrLatlng(this.curLineIndex);
@@ -102,7 +106,7 @@ L.Marker.HistoryTrace = L.Marker.extend({
             this.moveToUntil = performance.now() + this.hisOptions.durationTimes[this.curLineIndex];
         }
         this.remaining = this.moveToUntil - performance.now();
-        console.log("this.remaining" + this.remaining);
+        // console.log("this.remaining" + this.remaining);
         var persent = (this.hisOptions.durationTimes[this.curLineIndex] - this.remaining) / this.hisOptions.durationTimes[this.curLineIndex];
         // 会出现persent>1的情况
         if (persent < 1) {

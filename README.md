@@ -14,7 +14,8 @@ Demo sample.html
     ];
     var hisOptions = {
         durationTimes: [3000],//[3000,2000,4000]
-        lineColor: "green"
+        lineColor: "green",
+        loop:false//loop
     }
     var marker = L.Marker.historyTrace(latlngs, duration).addTo(mymap);
     marker.start();
